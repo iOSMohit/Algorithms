@@ -7,23 +7,58 @@
 
 import Foundation
 
-final class Heap {
+final class MaxHeap<Element: Comparable> {
     
     // MARK: - Properties
-    private var elements = [Int]()
+    private var elements = [Element]()
     private var size: Int {
         return elements.count
     }
     
     // MARK: - Public methods
-    func buildHeap(elements: [Int]) {
-        let size = elements.count
+    func buildHeap(elements: [Element]) {
+        self.elements = elements
         for index in stride(from: size/2, through: 0, by: -1) {
             maxHeapify(index: index)
         }
     }
-    func insert(value: Int) {
+    /// O(logn) - Operation perform maxHeapify
+    private func delete(at index: Int) {
+        guard !elements.isEmpty, elements.indices.contains(index) else { return }
         
+        self.elements[index] = self.elements[size-1]
+        self.elements.removeLast()
+        
+        self.maxHeapify(index: index)
+    }
+    /// O(n) - Finding index of the item in the list
+    func delete(value: Element) {
+        if let index = self.elements.firstIndex(of: value) {
+            delete(at: index)
+        }
+    }
+    func insert(value: Element) {
+        self.elements.append(value)
+        
+        heapifyUp(index: size-1)
+    }
+    private func heapifyUp(index: Int) {
+        if index == 0 {
+            // We are alreadyx at top of the heap
+            return
+        }
+        
+        let parent = parent(of: index)
+        if elements[index] > elements[parent] {
+            swap(fromIndex: parent, toIndex: index)
+            heapifyUp(index: parent)
+        }
+    }
+    
+    func printHeap() {
+        for item in elements {
+            print(item, terminator: " ")
+        }
     }
     
     // MARK: - Private helper methods
@@ -41,9 +76,11 @@ final class Heap {
         let right = right(of: index)
         var largest = index
         
-        if left < size && elements[left] > elements[index] {
+        if left < size && elements[left] >= elements[index] {
             largest = left
-        } else if right < size && elements[right] > elements[largest] {
+        }
+        
+        if right < size && elements[right] > elements[largest] {
             largest = right
         }
         
@@ -57,4 +94,8 @@ final class Heap {
         elements[fromIndex] = elements[toIndex]
         elements[toIndex] = tempValue
     }
+}
+
+final class MinHeap<Element: Comparable> {
+    
 }
