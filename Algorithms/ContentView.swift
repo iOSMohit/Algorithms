@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
+    private let heap = Heap()
     var body: some View {
         VStack {
             Image(systemName: "globe")
